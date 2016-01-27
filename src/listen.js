@@ -5,7 +5,7 @@ var delegate = require('delegate');
  * Validates all params and calls the right
  * listener function based on its target type.
  *
- * @param {String|HTMLElement|HTMLCollection|NodeList} target
+ * @param {String|Window|Document|HTMLElement|HTMLCollection|NodeList} target
  * @param {String} type
  * @param {Function} callback
  * @return {Object}
@@ -23,7 +23,7 @@ function listen(target, type, callback) {
         throw new TypeError('Third argument must be a Function');
     }
 
-    if (is.node(target)) {
+    if (is.listenable(target)) {
         return listenNode(target, type, callback);
     }
     else if (is.nodeList(target)) {
@@ -33,7 +33,7 @@ function listen(target, type, callback) {
         return listenSelector(target, type, callback);
     }
     else {
-        throw new TypeError('First argument must be a String, HTMLElement, HTMLCollection, or NodeList');
+        throw new TypeError('First argument must be a String, Window, Document, HTMLElement, HTMLCollection, or NodeList');
     }
 }
 

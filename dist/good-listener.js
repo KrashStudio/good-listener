@@ -61,16 +61,17 @@ var closest = require('closest');
  * @param {String} selector
  * @param {String} type
  * @param {Function} callback
+ * @param {Boolean} useCapture
  * @return {Object}
  */
-function delegate(element, selector, type, callback) {
+function delegate(element, selector, type, callback, useCapture) {
     var listenerFn = listener.apply(this, arguments);
 
-    element.addEventListener(type, listenerFn);
+    element.addEventListener(type, listenerFn, useCapture);
 
     return {
         destroy: function() {
-            element.removeEventListener(type, listenerFn);
+            element.removeEventListener(type, listenerFn, useCapture);
         }
     }
 }
@@ -98,15 +99,14 @@ module.exports = delegate;
 
 },{"closest":1}],4:[function(require,module,exports){
 /**
- * Check if argument is a HTML element.
+ * Check if argument is listenable.
  *
  * @param {Object} value
  * @return {Boolean}
  */
-exports.node = function(value) {
+exports.listenable = function(value) {
     return value !== undefined
-        && value instanceof HTMLElement
-        && value.nodeType === 1;
+        && value.addEventListener !== undefined;
 };
 
 /**
@@ -155,7 +155,7 @@ var delegate = require('delegate');
  * Validates all params and calls the right
  * listener function based on its target type.
  *
- * @param {String|HTMLElement|HTMLCollection|NodeList} target
+ * @param {String|Window|Document|HTMLElement|HTMLCollection|NodeList} target
  * @param {String} type
  * @param {Function} callback
  * @return {Object}
@@ -173,7 +173,7 @@ function listen(target, type, callback) {
         throw new TypeError('Third argument must be a Function');
     }
 
-    if (is.node(target)) {
+    if (is.listenable(target)) {
         return listenNode(target, type, callback);
     }
     else if (is.nodeList(target)) {
@@ -183,7 +183,7 @@ function listen(target, type, callback) {
         return listenSelector(target, type, callback);
     }
     else {
-        throw new TypeError('First argument must be a String, HTMLElement, HTMLCollection, or NodeList');
+        throw new TypeError('First argument must be a String, Window, Document, HTMLElement, HTMLCollection, or NodeList');
     }
 }
 

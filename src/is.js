@@ -1,13 +1,12 @@
 /**
- * Check if argument is a HTML element.
+ * Check if argument is listenable.
  *
  * @param {Object} value
  * @return {Boolean}
  */
-exports.node = function(value) {
+exports.listenable = function(value) {
     return value !== undefined
-        && value instanceof HTMLElement
-        && value.nodeType === 1;
+        && value.addEventListener !== undefined;
 };
 
 /**
